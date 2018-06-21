@@ -49,14 +49,14 @@
         <li class="text-danger" v-for="error in errors">{{ error }}</li>
     </ul>
 
-    <!-- Odd Glitch when enabled -->
-      <button v-on:click="loadMoviesRating()">Rating</button>
-      <button v-on:click="loadMoviesPopular()">Popularity</button>
+      
+    <button v-on:click="loadMoviesRating()">Pull Highest Rated Movies</button>
+    <button v-on:click="loadMoviesPopular()">Pull Most Popular Movies</button>
 
     <div class="tab">
-      <button class="tablinks" v-on:click="setSortTerm('Rating')">Rating</button>
-      <button class="tablinks" v-on:click="setSortTerm('Title')">Title</button>
-      <button class="tablinks" v-on:click="setSortTerm('Release_Date')">Release Date</button>
+      <button class="tablinks" v-on:click="setSortTerm('Rating')">Sort by Rating</button>
+      <button class="tablinks" v-on:click="setSortTerm('Title')">Sort by Title</button>
+      <button class="tablinks" v-on:click="setSortTerm('Release_Date')">Sort by Release Date</button>
 
     </div>
 

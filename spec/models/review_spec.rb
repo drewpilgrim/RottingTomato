@@ -17,5 +17,10 @@ RSpec.describe Review, type: :model do
     expect(review).not_to be_valid
   end
 
+  it "is not valid without a date" do 
+    review = Review.new({user_id: "superCritic@example.com", movie_id: 383498, movie_title: "Deadpool 2", comment: "Good Movie"})
+    expect(review).not_to be_valid
+  end
+
 
 end
