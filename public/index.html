@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My App</title>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.js"></script>
+  <script src="index.js" defer></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" href="index.css">
+
+
+</head>
+<body>
+  <div id="vue-app">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button> 
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/#/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/#/reviews">All Reviews</a>
+          </li>
+        </ul>
+      </div>
+    </nav> 
+
+    <router-view></router-view>
+    
+  </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+</html>
+
+<template id="home-page">
+  <div class="vue-component">
+    <ul>
+        <li class="text-danger" v-for="error in errors">{{ error }}</li>
+    </ul>
+
+    <!-- Odd Glitch when enabled -->
+      <button v-on:click="loadMoviesRating()">Rating</button>
+      <button v-on:click="loadMoviesPopular()">Popularity</button>
+
+    <div class="tab">
+      <button class="tablinks" v-on:click="setSortTerm('Rating')">Rating</button>
+      <button class="tablinks" v-on:click="setSortTerm('Title')">Title</button>
+      <button class="tablinks" v-on:click="setSortTerm('Release_Date')">Release Date</button>
+
+    </div>
+
+    <div>
+      <a v-bind:href="'/#/reviews'" class="btn btn-primary">See all Reviews</a>
+    </div>
+
+    <div class="row">
+      <div v-for="movie in sortedMovies" class="col-md-4">
+        <div class="card mb-2">
+          <div class="card-body">
+            <h4 class="card-title">{{ movie.title }}</h4>
+            <img v-bind:src="'https://image.tmdb.org/t/p/w154/' + movie.poster_path">
+            <p class="card-text description">Rating: {{ movie.vote_average }}</p>
+            <p class="card-text price">Release Date: {{ movie.release_date }}</p>
+            <p class="card-text price">Description: {{ movie.overview }}</p>
+            <a v-bind:href="'/#/movie/' + movie.id" class="btn btn-primary">More Details or leave a review</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</template>
+
+<template id="review-page">
+  <div class="vue-component">
+    <ul>
+        <li class="text-danger" v-for="error in errors">{{ error }}</li>
+    </ul>
+    <h1>Reviews</h1>
+    <div class="row">
+      <div v-for="review in reviews" class="col-md-4">
+        <div class="card mb-2">
+          <div class="card-body">
+            <h4 class="card-title">{{ review.movie_title }}</h4>
+            <p class="card-text description">User: {{ review.user_id }}</p>
+            <p class="card-text description">Rating: {{ review.rating }}</p>
+            <p class="card-text price">Date: {{ review.date }}</p>
+            <p v-if="review.comment.length > 1" class="card-text price">Comment: {{ review.comment }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</template>
+
+<template id="movie-show-page">
+  <div class="vue-component">
+  
+    
+    <div class="row">
+        <div class="card mb-2">
+          <div class="card-body">
+            <h4 class="card-title">{{ movie.title }}</h4>
+            <img v-bind:src="'https://image.tmdb.org/t/p/w154/' + movie.poster_path">
+            <p class="card-text description">Rating: {{ movie.vote_average }}</p>
+            <p class="card-text price">Release Date: {{ movie.release_date }}</p>
+            <p class="card-text price">Description: {{ movie.overview }}</p>
+
+
+            <ul>
+                <li class="text-danger" v-for="error in errors">{{ error }}</li>
+            </ul>
+
+            <p>Write a review</p>
+            <div class="form-group">
+              <label>User Email:</label> 
+              <input type="text" class="form-control" v-model="userEmail">
+            </div>
+            <div class="form-group">
+              <label>Rating (Out of 10):</label>
+              <input type="integer" class="form-control" v-model="rating">
+            </div>
+            <div class="form-group">
+              <label>Comment:</label>
+              <input type="text" class="form-control" v-model="comment">
+            </div>
+            <div class="form-group">
+              <label>Date Seen:</label>
+              <input type="Date" class="form-control" v-model="dateSeen">
+            </div>
+            <button class="btn btn-primary" v-on:click="submit()">Add Review</button>
+            
+            <div id="reviewCreated">Review Succesfully Created</div>
+            <a v-on:click="loadReviews()" class="btn btn-primary" data-toggle="modal" data-target="#reviewModal">View Reviews</a>
+            
+            <div>
+              <iframe id="trailerVid" width="420" height="315"
+                src="https://www.youtube.com/embed/tgbNymZ7vqY">
+              </iframe>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+     <div id="reviewModal" class="modal fade" role="dialog">
+       <div class="modal-dialog">
+
+         <!-- Modal content-->
+         <div class="modal-content">
+           <div class="modal-header">
+             <button type="button" class="close" data-dismiss="modal">&times;</button>
+             <h4 class="modal-title">Reviews</h4>
+           </div>
+           <div class="modal-body">
+            <div v-for="review in reviews">
+                <div class="card mb-2">
+                  <div class="card-body">
+                    <h4 class="card-title">{{ review.user_id }}</h4>
+                    <p class="card-text description">Rating: {{ review.rating }}</p>
+                    <p class="card-text price"> Date: {{ review.date }}</p>
+                    <p v-if="review.comment.length > 1" class="card-text price">Comment: {{ review.comment }}</p>
+                  </div>
+                </div>
+              </div>            
+            </div>
+
+           </div>
+           <div class="modal-footer">
+             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+           </div>
+         </div>
+
+       </div>
+     </div>
+
+<!--     </div>
+ -->
+
+</template>
